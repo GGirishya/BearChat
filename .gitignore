@@ -1,0 +1,50 @@
+# Virtual environment
+venv/
+env/
+ENV/
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Model files (large)
+*.safetensors
+*.bin
+*.pth
+*.pt
+models/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/settings.json
+.idea/
+
+# Logs
+*.log
+
+# Environment variables
+.env
+.env.local
+
+# Separate folders (keep out of version control)
+rk33s@SGF.EDUBEAR.NET@babbage/
+.rk33s@SGF.EDUBEAR.NET@babbage
