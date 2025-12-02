@@ -1,4 +1,4 @@
-# MSU Chatbot - trained on MSU knowledge
+# BEARCHAT - trained on MSU knowledge
 
 A fine-tuned Llama-3.2-3B-Instruct model designed to answer questions about Missouri State University's knwledgebase data. This project uses Retrieval-Augmented Generation (RAG) techniques and provides multiple interfaces for interacting with the model.
 
