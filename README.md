@@ -80,29 +80,21 @@ A fine-tuned Llama-3.2-3B-Instruct model designed to answer questions about Miss
 
 Run the fine-tuning script:
 ```bash
-python Superior_finetune.py
+python finetune.py
 ```
 
 This will:
 - Load the Llama-3.2-3B-Instruct base model
 - Apply LoRA adapters for efficient fine-tuning
-- Train on the cost of attendance dataset
+- Train on the supplied datasets
 - Save checkpoints to `models/latest/`
-
-### Testing the Model
-
-Batch test the model:
-```bash
-python test_model.py
-```
-
-This runs predefined questions about MSU's cost of attendance and displays responses.
 
 ### Interactive Chat
 
 Start an interactive chat session:
 ```bash
-python chat_contextual.pyx
+cd bearchat_ai
+flutter run -d # device such as chrome or Iphone
 ```
 
 The chat includes topic detection to provide context-aware responses.
@@ -118,7 +110,7 @@ The server will be available at `http://localhost:8080` with CORS enabled for we
 
 #### API Endpoints
 
-**1. Regular Chat**
+1. Regular Chat
 ```bash
 curl -X POST http://localhost:8080/chat \
   -H "Content-Type: application/json" \
@@ -142,7 +134,7 @@ curl -X POST http://localhost:8080/upload \
 
 Supported formats: PDF, PNG, JPG, JPEG, BMP, TIFF, GIF
 
-**Python example:**
+##Python example:
 ```python
 import requests
 
@@ -161,7 +153,7 @@ result = response.json()
 print(result['answer'])
 ```
 
-**3. Batch Processing**
+3. Batch Processing
 ```bash
 curl -X POST http://localhost:8080/batch \
   -H "Content-Type: application/json" \
@@ -200,7 +192,7 @@ python convert_csv_to_json.py
 
 ## Training Data
 
-The model is trained on `smart_cost_of_attendance_for_missouri_state_university_training.json`, which contains:
+The model is trained on `missouri_state_university_data_sets.json`, which contains:
 - Questions and answers about MSU's cost of attendance
 - Metadata including topics, source URLs, and content types
 - Cleaned and validated data for optimal training
@@ -210,14 +202,13 @@ The model is trained on `smart_cost_of_attendance_for_missouri_state_university_
 - **Base Model**: Meta-Llama/Llama-3.2-3B-Instruct
 - **Fine-tuning**: LoRA (Low-Rank Adaptation) for parameter-efficient training
 - **Training Framework**: TRL (Transformer Reinforcement Learning) with SFT
-- **Context Window**: Supports up to 4096 tokens
+- **Context Window**: Supports up to 1024-4096 / depends on the context -  tokens
 
 ## Checkpoint Management
 
 The project includes smart checkpoint management:
 - `models/latest/`: Current fine-tuned model
 - `models/previous/`: Automatic backup before new training
-- Use `rollback_checkpoint.py` to restore previous versions
 
 ## Contributing
 
@@ -240,7 +231,7 @@ Bekhrom Norkulov
 
 ## Acknowledgments
 
-- Missouri State University for the cost of attendance information
+- Missouri State University for the general and private information for academic purpose.
 - Meta for the Llama model series
 - Hugging Face for the transformers library
 - The PEFT and TRL libraries for efficient fine-tuning
