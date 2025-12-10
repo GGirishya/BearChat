@@ -591,13 +591,13 @@ def generate_response(question, max_length=512, temperature=0.6, top_p=0.8, conv
                 web_search_context = "\n" + search_engine.format_results_for_llm(search_response)
                 search_citations = search_engine.extract_citations(search_response)
                 search_used = True
-                logger.info(f"✓ Added {len(search_citations)} web sources to context")
+                logger.info(f" Added {len(search_citations)} web sources to context")
             else:
-                logger.warning("⚠️  Web search returned no results")
+                logger.warning("  Web search returned no results")
         else:
-            logger.warning("⚠️  Web search requested but search engine not available")
+            logger.warning(" Web search requested but search engine not available")
     else:
-        logger.info("⏭️  Web search disabled by user; skipping")
+        logger.info("⏭  Web search disabled by user; skipping")
 
     # Build conversation context if history exists
     history_context = ""
@@ -608,7 +608,6 @@ def generate_response(question, max_length=512, temperature=0.6, top_p=0.8, conv
             history_context += f"Assistant: {exchange['answer']}\n\n"
 
     # Format with contextual metadata (EXACTLY like training format)
-    # CRITICAL: Add strong constraints to prevent generic responses
     content_type_readable = content_type.replace('_', ' ').title()
 
     # Adjust system behavior based on whether web search is active
