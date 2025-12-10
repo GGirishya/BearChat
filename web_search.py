@@ -34,7 +34,7 @@ try:
     GOOGLE_API_AVAILABLE = True
 except ImportError:
     GOOGLE_API_AVAILABLE = False
-    print("⚠️  Google API client not installed. Run: pip install google-api-python-client")
+    print("  Google API client not installed. Run: pip install google-api-python-client")
 
 logger = logging.getLogger(__name__)
 
@@ -429,7 +429,7 @@ if __name__ == "__main__":
     engine = get_search_engine()
     
     if not engine.is_available():
-        print("❌ Search engine not available. Check API credentials in .env")
+        print(" Search engine not available. Check API credentials in .env")
         exit(1)
     
     # Test queries
@@ -461,4 +461,4 @@ if __name__ == "__main__":
                     print(f"{i}. {cite['title']}")
                     print(f"   {cite['url']}")
         else:
-            print(f"❌ Search failed: {response.get('error')}")
+            print(f" Search failed: {response.get('error')}")
