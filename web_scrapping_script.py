@@ -39,7 +39,7 @@ try:
     from trafilatura import extract
     from trafilatura.settings import use_config
 except ImportError:
-    print("❌ Missing dependencies!")
+    print(" Missing dependencies!")
     print("Install with: pip install trafilatura httpx playwright")
     print("Then run: playwright install chromium")
     exit(1)
@@ -50,7 +50,7 @@ try:
     PLAYWRIGHT_AVAILABLE = True
 except ImportError:
     PLAYWRIGHT_AVAILABLE = False
-    print("⚠️  Playwright not installed - will use basic HTTP (may fail on modern sites)")
+    print("  Playwright not installed - will use basic HTTP (may fail on modern sites)")
     print("For better results: pip install playwright && playwright install chromium")
 
 
@@ -117,7 +117,7 @@ class MSUDataScraper:
                     
                     return html
             except Exception as e:
-                print(f"  ⚠️  Playwright failed: {e}")
+                print(f"    Playwright failed: {e}")
                 print(f"  Falling back to basic HTTP...")
         
         # Fallback to basic HTTP
@@ -408,7 +408,7 @@ class MSUDataScraper:
         5. Generate training data
         6. Cache results
         """
-        print(f"\n📍 {urlparse(url).path}")
+        print(f"\n {urlparse(url).path}")
         
         # Check cache
         cached = self._load_cache(url)
@@ -476,8 +476,8 @@ class MSUDataScraper:
         with open(output_path, 'w', encoding='utf-8') as f:
             json.dump(data, f, indent=2, ensure_ascii=False)
         
-        print(f"\n✅ Saved {len(data)} examples to {filename}")
-        print(f"\n📊 Stats:")
+        print(f"\n Saved {len(data)} examples to {filename}")
+        print(f"\n Stats:")
         print(f"   Total Q&A pairs: {len(data)}")
         
         # Count by type
@@ -501,7 +501,7 @@ async def interactive_mode():
     scraper = MSUDataScraper()
     
     print("\n" + "="*70)
-    print("🐻 MSU DATA SCRAPER - Production Version")
+    print(" MSU DATA SCRAPER - Production Version")
     print("="*70)
     print("\nUsing: trafilatura (professional content extraction)")
     print("Output: Ready-to-train JSON format")
@@ -509,7 +509,7 @@ async def interactive_mode():
     
     urls = []
     
-    print("\n📝 Enter URLs to scrape (one per line, empty line to finish):")
+    print("\n Enter URLs to scrape (one per line, empty line to finish):")
     print("Example: https://www.missouristate.edu/admissions")
     print()
     
@@ -525,24 +525,24 @@ async def interactive_mode():
         print(f"  ✓ Added ({len(urls)} total)")
     
     if not urls:
-        print("\n❌ No URLs provided")
+        print("\n No URLs provided")
         return
     
-    print(f"\n🚀 Scraping {len(urls)} URL(s)...")
+    print(f"\n Scraping {len(urls)} URL(s)...")
     print("="*70)
     
     # Scrape
     training_data = await scraper.scrape_multiple(urls)
     
     if not training_data:
-        print("\n❌ No data collected")
+        print("\n No data collected")
         return
     
     # Save
     filename = f"msu_training_{datetime.now().strftime('%Y%m%d_%H%M%S')}.json"
     scraper.save_training_file(training_data, filename)
     
-    print(f"\n📦 Next steps:")
+    print(f"\n Next steps:")
     print(f"   1. Review: cat {filename} | head -100")
     print(f"   2. Update finetune.py:")
     print(f'      data = load_dataset("json", data_files="{filename}", split="train")')
@@ -565,7 +565,7 @@ async def batch_mode():
         "https://www.missouristate.edu/academics",
     ]
     
-    print(f"\n🚀 Batch mode: {len(urls_config)} URLs")
+    print(f"\n Batch mode: {len(urls_config)} URLs")
     training_data = await scraper.scrape_multiple(urls_config)
     
     if training_data:
@@ -586,14 +586,14 @@ def main():
         import trafilatura
         print("✓ httpx and trafilatura installed")
     except ImportError as e:
-        print(f"\n❌ Missing basic dependencies: {e}")
+        print(f"\n Missing basic dependencies: {e}")
         print("\nInstall with:")
         print("  pip install trafilatura httpx")
         return
     
     # Check Playwright (recommended for modern sites)
     if not PLAYWRIGHT_AVAILABLE:
-        print("⚠️  Playwright not installed (recommended for JavaScript sites like MSU)")
+        print("  Playwright not installed (recommended for JavaScript sites like MSU)")
         print("\nFor best results, install:")
         print("  pip install playwright")
         print("  playwright install chromium")
@@ -607,9 +607,9 @@ def main():
     try:
         asyncio.run(interactive_mode())
     except KeyboardInterrupt:
-        print("\n\n👋 Cancelled by user")
+        print("\n\n Cancelled by user")
     except Exception as e:
-        print(f"\n❌ Error: {e}")
+        print(f"\n Error: {e}")
         import traceback
         traceback.print_exc()
 
