@@ -56,7 +56,7 @@ def convert_to_training_format(input_file='web_search_data_collection.txt',
     line_count = 0
     error_count = 0
     
-    print(f"📖 Reading from: {input_file}")
+    print(f"Reading from: {input_file}")
     
     with open(input_file, 'r', encoding='utf-8') as f:
         for line_num, line in enumerate(f, 1):
@@ -127,7 +127,7 @@ def convert_to_training_format(input_file='web_search_data_collection.txt',
     
     # Sample entry
     if training_data:
-        print(f"\n📝 Sample Entry:")
+        print(f"\n Sample Entry:")
         sample = training_data[0]
         print(f"   Instruction: {sample['instruction'][:60]}...")
         print(f"   Output: {sample['output'][:60]}...")
@@ -152,10 +152,10 @@ def view_recent_entries(input_file='web_search_data_collection.txt', count=5):
                     pass
     
     if not entries:
-        print("📭 No entries found")
+        print(" No entries found")
         return
     
-    print(f"\n📋 Last {min(count, len(entries))} Web Search Queries:\n")
+    print(f"\n Last {min(count, len(entries))} Web Search Queries:\n")
     
     for i, entry in enumerate(entries[-count:], 1):
         print(f"{'='*60}")
@@ -197,7 +197,7 @@ def get_statistics(input_file='web_search_data_collection.txt'):
                     pass
     
     if not entries:
-        print("📭 No data collected yet")
+        print(" No data collected yet")
         return
     
     total = len(entries)
@@ -257,4 +257,4 @@ if __name__ == "__main__":
         get_statistics()
         print()
         convert_to_training_format()
-        print(f"\n✨ Ready for fine-tuning with: web_search_training_data.json")
+        print(f"\n Ready for fine-tuning with: web_search_training_data.json")
