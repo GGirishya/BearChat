@@ -48,7 +48,7 @@ def convert_to_training_format(input_file='web_search_data_collection.txt',
     """
     
     if not Path(input_file).exists():
-        print(f"❌ Input file not found: {input_file}")
+        print(f" Input file not found: {input_file}")
         print("   No web search data collected yet.")
         return
     
@@ -87,13 +87,13 @@ def convert_to_training_format(input_file='web_search_data_collection.txt',
                 
             except json.JSONDecodeError as e:
                 error_count += 1
-                print(f"⚠️  Line {line_num}: Invalid JSON - {e}")
+                print(f" Line {line_num}: Invalid JSON - {e}")
             except Exception as e:
                 error_count += 1
-                print(f"⚠️  Line {line_num}: Error - {e}")
+                print(f" Line {line_num}: Error - {e}")
     
     if not training_data:
-        print("❌ No valid training data found")
+        print(" No valid training data found")
         return
     
     # Save training data
@@ -101,11 +101,11 @@ def convert_to_training_format(input_file='web_search_data_collection.txt',
         json.dump(training_data, f, indent=2, ensure_ascii=False)
     
     # Statistics
-    print(f"\n✅ Conversion complete!")
-    print(f"   📊 Total entries: {line_count}")
-    print(f"   ⚠️  Errors: {error_count}")
-    print(f"   💾 Output: {output_file}")
-    print(f"   📦 Size: {Path(output_file).stat().st_size / 1024:.1f} KB")
+    print(f"\n Conversion complete!")
+    print(f"    Total entries: {line_count}")
+    print(f"     Errors: {error_count}")
+    print(f"    Output: {output_file}")
+    print(f"    Size: {Path(output_file).stat().st_size / 1024:.1f} KB")
     
     # Show topic breakdown
     topic_counts = {}
@@ -117,11 +117,11 @@ def convert_to_training_format(input_file='web_search_data_collection.txt',
         topic_counts[topic] = topic_counts.get(topic, 0) + 1
         content_type_counts[content_type] = content_type_counts.get(content_type, 0) + 1
     
-    print(f"\n📊 Topic Breakdown:")
+    print(f"\n Topic Breakdown:")
     for topic, count in sorted(topic_counts.items(), key=lambda x: x[1], reverse=True):
         print(f"   • {topic}: {count}")
     
-    print(f"\n📊 Content Type Breakdown:")
+    print(f"\n Content Type Breakdown:")
     for ctype, count in sorted(content_type_counts.items(), key=lambda x: x[1], reverse=True):
         print(f"   • {ctype}: {count}")
     
@@ -138,7 +138,7 @@ def view_recent_entries(input_file='web_search_data_collection.txt', count=5):
     """View the most recent collected entries"""
     
     if not Path(input_file).exists():
-        print(f"❌ No data file found: {input_file}")
+        print(f" No data file found: {input_file}")
         return
     
     entries = []
@@ -161,11 +161,11 @@ def view_recent_entries(input_file='web_search_data_collection.txt', count=5):
         print(f"{'='*60}")
         print(f"Entry #{len(entries) - count + i}")
         print(f"{'='*60}")
-        print(f"🕐 Time: {entry.get('timestamp', 'N/A')}")
-        print(f"❓ Question: {entry.get('question', 'N/A')}")
-        print(f"📚 Topic: {entry.get('topic', 'N/A')}")
-        print(f"🏷️  Type: {entry.get('content_type', 'N/A')}")
-        print(f"🔗 Citations: {len(entry.get('citations', []))}")
+        print(f" Time: {entry.get('timestamp', 'N/A')}")
+        print(f" Question: {entry.get('question', 'N/A')}")
+        print(f" Topic: {entry.get('topic', 'N/A')}")
+        print(f"  Type: {entry.get('content_type', 'N/A')}")
+        print(f" Citations: {len(entry.get('citations', []))}")
         
         if entry.get('citations'):
             print(f"\n   Sources:")
@@ -173,7 +173,7 @@ def view_recent_entries(input_file='web_search_data_collection.txt', count=5):
                 print(f"   [{j}] {cite.get('title', 'Untitled')[:50]}")
                 print(f"       {cite.get('url', '')[:60]}")
         
-        print(f"\n💬 Answer Preview:")
+        print(f"\n Answer Preview:")
         answer = entry.get('answer', '')
         preview = answer[:200] + '...' if len(answer) > 200 else answer
         print(f"   {preview}")
@@ -183,7 +183,7 @@ def get_statistics(input_file='web_search_data_collection.txt'):
     """Get statistics about collected data"""
     
     if not Path(input_file).exists():
-        print(f"❌ No data file found: {input_file}")
+        print(f" No data file found: {input_file}")
         return
     
     entries = []
@@ -217,7 +217,7 @@ def get_statistics(input_file='web_search_data_collection.txt'):
     total_citations = sum(len(e.get('citations', [])) for e in entries)
     avg_citations = total_citations / total if total > 0 else 0
     
-    print(f"\n📊 Web Search Data Statistics")
+    print(f"\n Web Search Data Statistics")
     print(f"{'='*60}")
     print(f"Total Entries: {total}")
     print(f"Date Range: {first_date} to {last_date}")
@@ -232,7 +232,7 @@ def get_statistics(input_file='web_search_data_collection.txt'):
 if __name__ == "__main__":
     import sys
     
-    print("🔄 Web Search Training Data Converter\n")
+    print("Web Search Training Data Converter\n")
     
     if len(sys.argv) > 1:
         command = sys.argv[1]
