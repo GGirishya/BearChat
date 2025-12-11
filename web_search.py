@@ -4,12 +4,12 @@ Web Search Module for BearChat
 Google Custom Search API integration with MSU-specific filtering
 
 Features:
-✓ Google Custom Search API (100 free queries/day)
-✓ Strict MSU domain filtering
-✓ Result validation and relevance scoring
-✓ Citation formatting
-✓ Caching to save API quota
-✓ Fallback handling
+- Google Custom Search API (100 free queries/day)
+- Strict MSU domain filtering
+- Result validation and relevance scoring
+- Citation formatting
+- Caching to save API quota
+- Fallback handling
 
 Setup:
 1. Get Google Custom Search API key: https://developers.google.com/custom-search/v1/overview
@@ -34,7 +34,7 @@ try:
     GOOGLE_API_AVAILABLE = True
 except ImportError:
     GOOGLE_API_AVAILABLE = False
-    print("  Google API client not installed. Run: pip install google-api-python-client")
+    print(" [WARN] Google API client not installed. Run: pip install google-api-python-client")
 
 logger = logging.getLogger(__name__)
 
@@ -94,7 +94,7 @@ class WebSearchEngine:
         
         try:
             self.service = build("customsearch", "v1", developerKey=self.api_key)
-            logger.info("✓ Google Custom Search initialized")
+            logger.info(" [INFO] Google Custom Search initialized")
         except Exception as e:
             logger.error(f"Failed to initialize Google CSE: {e}")
             self.service = None
@@ -114,11 +114,11 @@ class WebSearchEngine:
             timestamp = cached_data.get('timestamp', 0)
             
             if time.time() - timestamp < SEARCH_CACHE_TTL:
-                logger.info(f"✓ Search cache HIT: {cache_key[:8]}...")
+                logger.info(f" [INFO] Search cache HIT: {cache_key[:8]}...")
                 return cached_data['results']
             else:
                 del search_cache[cache_key]
-                logger.info(f"⚠ Search cache EXPIRED: {cache_key[:8]}...")
+                logger.info(f" [WARN] Search cache EXPIRED: {cache_key[:8]}...")
         
         return None
     
@@ -135,7 +135,7 @@ class WebSearchEngine:
             'results': results,
             'timestamp': time.time()
         }
-        logger.info(f"✓ Cached search results: {cache_key[:8]}...")
+        logger.info(f" [INFO] Cached search results: {cache_key[:8]}...")
     
     def _validate_msu_relevance(self, query: str) -> Tuple[bool, str]:
         """
@@ -429,7 +429,7 @@ if __name__ == "__main__":
     engine = get_search_engine()
     
     if not engine.is_available():
-        print(" Search engine not available. Check API credentials in .env")
+        print("❌ Search engine not available. Check API credentials in .env")
         exit(1)
     
     # Test queries
@@ -461,4 +461,4 @@ if __name__ == "__main__":
                     print(f"{i}. {cite['title']}")
                     print(f"   {cite['url']}")
         else:
-            print(f" Search failed: {response.get('error')}")
+            print(f"❌ Search failed: {response.get('error')}")
