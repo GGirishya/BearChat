@@ -1,9 +1,9 @@
 """
-Final Optimized Fine-tuning: Llama-3.1-8B-Instruct + A100
-===========================================================================
-Model: meta-llama/Llama-3.1-8B-Instruct
-Hardware: NVIDIA A100 (Optimized with Flash Attention 2 & bf16)
-Goal: High Accuracy (No Packing, All Linear Layers Targeted)
+Fine-tuning Script: Llama-3.1-8B-Instruct
+=========================================
+Configuration:
+Model: meta-llama/Llama-3.1-8B-Instruct 
+Optimizations: A100 (Flash Attention 2, bfloat16)
 """
 
 import torch
@@ -16,13 +16,13 @@ from datasets import load_dataset
 from transformers import AutoTokenizer, AutoModelForCausalLM
 from peft import LoraConfig, get_peft_model, PeftModel
 from trl import SFTTrainer, SFTConfig
-from google.colab import userdata
+from google.colab import userdata #this only if you run on google collab
 
 # Load environment variables
 load_dotenv()
 
 # ===== 1. CONFIGURATION =====
-model_id = "meta-llama/Llama-3.1-8B-Instruct"  # <--- UPDATED for 3.1
+model_id = "meta-llama/Llama-3.1-8B-Instruct"
 HF_TOKEN = userdata.get('HF_TOKEN')
 
 # Checkpoint directories
@@ -56,7 +56,7 @@ def manage_checkpoints():
         if os.path.exists(PREVIOUS_DIR):
             shutil.rmtree(PREVIOUS_DIR)
         shutil.move(LATEST_DIR, PREVIOUS_DIR)
-        print(f"   latest/ → previous/ (Backup created)")
+        print(f"   latest/ -> previous/ (Backup created)")
     else:
         print(f"\n No existing checkpoint to backup")
 
@@ -70,9 +70,7 @@ print("="*80)
 print(f"\n Loading tokenizer...")
 tokenizer = AutoTokenizer.from_pretrained(model_id, token=HF_TOKEN)
 
-# --- CRITICAL FIX FOR LLAMA 3.1 INFINITE GENERATION ---
-# We MUST use a different token for padding than EOS, or the model
-# learns to ignore the EOS token and talks forever.
+# --- FOR LLAMA 3.1 INFINITE GENERATION ---
 tokenizer.add_special_tokens({'pad_token': '<|reserved_special_token_0|>'})
 tokenizer.padding_side = 'right' # Right padding is standard for SFT
 print(f"  Applied Padding Fix: Pad Token is now <|reserved_special_token_0|>")
@@ -101,9 +99,9 @@ if os.path.exists(PREVIOUS_DIR):
     # Resize embeddings for the new pad token BEFORE loading adapter
     base_model.resize_token_embeddings(len(tokenizer))
 
-    model = PeftModel.from_pretrained(base_model, PREVIOUS_DIR)
+    model = PeftModel.from_pretrained(base_model, PREVIOUS_DIR) # this will load the previous adapter and merge it with the base model
     model = model.merge_and_unload()
-    print(f"    Previous knowledge merged.")
+    print(f"   Previous knowledge merged.")
 else:
     print(f"   Loading fresh base model...")
     model = AutoModelForCausalLM.from_pretrained(
@@ -166,7 +164,7 @@ def format_prompt(sample):
         messages = sample['messages']
         instruction = ""
         response = ""
-        
+
         for msg in messages:
             role = msg.get('role')
             content = msg.get('content', '')
@@ -174,14 +172,14 @@ def format_prompt(sample):
                 instruction += content + "\n"
             elif role == 'assistant':
                 response += content + "\n"
-        
+
         instruction = instruction.strip()
         response = response.strip()
-        
+
         # Topic is harder to find in Chat format, default or try to extract?
         # For now, we use the default fallback if no metadata exists
-        topic = 'Missouri State University' 
-        
+        topic = 'Missouri State University'
+
     else:
         # --- ORIGINAL INSTRUCTION FORMAT ---
         instruction = sample.get('instruction', '')
@@ -219,7 +217,7 @@ training_args = SFTConfig(
     # Learning Schedule (Slow & Steady for Accuracy)
     learning_rate=5e-5,
     warmup_ratio=0.1,
-    num_train_epochs=,           # 3 Epochs is usually optimal for 1k+ samples #or 7 for small 100 samples
+    num_train_epochs=3,           # 3 Epochs is usually optimal for 1k+ samples # or 7 for small 100 samples
     lr_scheduler_type="cosine",
 
     # Hardware
@@ -239,8 +237,8 @@ training_args = SFTConfig(
 )
 
 trainer = SFTTrainer(
-    model=model, # type: ignore
-    train_dataset=dataset, # type: ignore
+    model=model,
+    train_dataset=dataset,
     args=training_args,
     formatting_func=format_prompt,
     processing_class=tokenizer,
