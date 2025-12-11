@@ -10,12 +10,8 @@ Checkpoint Management:
 - Keeps only 2 versions: models/latest/ and models/previous/
 - Auto-backs up before training
 - Auto-deletes old checkpoints
-- Easy rollback with rollback_checkpoint.py
 
 The model learns: "I'm answering about [TOPIC] in the [CONTENT_TYPE] category"
-
-Note: Some type warnings from Pylance are false positives and can be ignored.
-The code works correctly despite the warnings.
 """
 
 import torch
@@ -38,10 +34,10 @@ if DATA_FILE == "":
     if json_files:
         # Sort by modification time, get most recent
         DATA_FILE = max(json_files, key=os.path.getmtime)
-        print(f"✓ Using latest file: {DATA_FILE}")
+        print(f" Using latest file: {DATA_FILE}")
     else:
         DATA_FILE = "msu_training_20251103_183346.json"  # Fallback default
-        print(f"⚠️  No training files found, using default: {DATA_FILE}")
+        print(f" No training files found, using default: {DATA_FILE}")
 
 # Load environment variables
 load_dotenv()
@@ -126,7 +122,7 @@ print(f"\n Checking for previous training...")
 device = torch.device("mps" if torch.backends.mps.is_available() else "cpu")
 
 if os.path.exists(PREVIOUS_DIR):
-    print(f"\n ✓ Previous training found in {PREVIOUS_DIR}")
+    print(f"\n [INFO] Previous training found in {PREVIOUS_DIR}")
     print(f"   Loading base model + previous LoRA adapters...")
     print(f"   This ensures the model REMEMBERS all previous knowledge!")
     
@@ -146,13 +142,13 @@ if os.path.exists(PREVIOUS_DIR):
     print(f"   Merging previous knowledge into base model (this is PERMANENT)...")
     model = model.merge_and_unload()
     
-    print(f"   ✓ Previous knowledge successfully merged!")
+    print(f"   [INFO] Previous knowledge successfully merged!")
     print(f"   Base model now contains ALL previous training data")
     print(f"   New training will ADD to this knowledge (not replace it)")
     
 else:
-    print(f"\n ℹ No previous training found")
-    print(f"   This is your FIRST training session")
+    print(f"\n [INFO] No previous training found")
+    print(f"   Starting fresh training session")
     print(f"   Loading fresh base model: {model_id}")
     
     model = AutoModelForCausalLM.from_pretrained(
@@ -162,16 +158,16 @@ else:
         token=HF_TOKEN
     )
 
-print(f"\n ✓ Model loaded successfully")
+print(f"\n [INFO] Model loaded successfully")
 
 # 2. --- LoRA Configuration ---
 print("\n" + "="*80)
 print(" CONFIGURING LoRA (DYNAMIC OPTIMIZATION)")
 print("="*80)
 
-# Enable gradient checkpointing for memory efficiency (CRITICAL for larger models)
+# Enable gradient checkpointing for memory efficiency
 model.gradient_checkpointing_enable()
-print(f"\n ✓ Gradient checkpointing enabled (saves ~40% memory)")
+print(f"\n [INFO] Gradient checkpointing enabled (saves ~40% memory)")
 
 # LoRA will be configured after analyzing dataset for optimal settings
 print(f"\n LoRA configuration will be optimized after analyzing dataset...")
@@ -226,8 +222,8 @@ elif num_examples < 500:
     lora_dropout = 0.05  # Standard dropout (A100 can handle more epochs)
     print(f"\n Medium dataset ({num_examples} examples)")
     print(f"   Strategy: Rank 16, Alpha 64 (4x scaling) for STRONG fine-tuning")
-    print(f"   ℹ️  For A100 training: 5-35 epochs is acceptable")
-    print(f"   ℹ️  Alpha 64 = 4x stronger than base model (prevents hallucination)")
+    print(f"   For A100 training: 5-35 epochs is acceptable")
+    print(f"   Alpha 64 = 4x stronger than base model (prevents hallucination)")
 else:
     lora_rank = 32
     lora_alpha = 128  # 4x scaling for large datasets
@@ -344,7 +340,7 @@ effective_batch = training_args.per_device_train_batch_size * training_args.grad
 steps_per_epoch = 45 / effective_batch  # Assuming 45 examples (update dynamically if needed)
 warmup_epochs = training_args.warmup_steps / steps_per_epoch
 
-print(f"\n ✅ OPTIMIZED Training Configuration (45-example dataset):")
+print(f"\n OPTIMIZED Training Configuration (45-example dataset):")
 print(f"   {'='*60}")
 print(f"   Batch Size (per device): {training_args.per_device_train_batch_size}")
 print(f"   Gradient Accumulation:   {training_args.gradient_accumulation_steps}")
@@ -374,7 +370,7 @@ trainer = SFTTrainer(
     processing_class=tokenizer,
 )
 
-print(f"  📊 KEY OPTIMIZATIONS APPLIED:")
+print(f"  KEY OPTIMIZATIONS APPLIED:")
 print(f"   {'='*60}")
 print(f"   Dataset Size:   45 examples (small dataset)")
 print(f"   Epochs:         5 → 12 (more passes needed)")
