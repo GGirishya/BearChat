@@ -429,7 +429,7 @@ if __name__ == "__main__":
     engine = get_search_engine()
     
     if not engine.is_available():
-        print("❌ Search engine not available. Check API credentials in .env")
+        print(" Search engine not available. Check API credentials in .env")
         exit(1)
     
     # Test queries
