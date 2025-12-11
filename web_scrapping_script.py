@@ -1,28 +1,13 @@
 """
-Production MSU Data Scraper (2025)
-==================================
-Modern web scraper using industry-standard tools for LLM training data.
+MSU Data Scraper
+================
+A web scraper using Trafilatura andhttpx/Playwright to collect training data.
 
-Tech Stack:
-- trafilatura: Professional-grade content extraction (used by Common Crawl)
-- httpx: Modern async HTTP client
-- JSON-LD: Structured data extraction
-- Smart caching & rate limiting
-
-Install dependencies:
+Dependencies:
     pip install trafilatura httpx
 
 Usage:
     python web_scrapping_script.py
-
-Features:
-✓ Automatic content extraction (no manual parsing)
-✓ JSON-LD structured data support
-✓ Async batch processing
-✓ Smart caching (avoid re-scraping)
-✓ Rate limiting (respectful)
-✓ High-quality Q&A generation
-✓ Direct output to training format
 """
 
 import json
@@ -117,7 +102,7 @@ class MSUDataScraper:
                     
                     return html
             except Exception as e:
-                print(f"    Playwright failed: {e}")
+                print(f"  [!] Playwright failed: {e}")
                 print(f"  Falling back to basic HTTP...")
         
         # Fallback to basic HTTP
@@ -131,7 +116,7 @@ class MSUDataScraper:
                 response.raise_for_status()
                 return response.text
         except Exception as e:
-            print(f"  ✗ Fetch error: {e}")
+            print(f"  [x] Fetch error: {e}")
             return None
     
     def extract_json_ld(self, html: str) -> List[Dict]:
@@ -408,12 +393,12 @@ class MSUDataScraper:
         5. Generate training data
         6. Cache results
         """
-        print(f"\n {urlparse(url).path}")
+        print(f"\nProcessing: {urlparse(url).path}")
         
         # Check cache
         cached = self._load_cache(url)
         if cached:
-            print(f"  ✓ Using cached data")
+            print(f"  [+] Using cached data")
             return cached.get('training_data', [])
         
         # Fetch
@@ -424,15 +409,15 @@ class MSUDataScraper:
         # Extract with trafilatura (does all the heavy lifting)
         content = self.extract_main_content(html, url)
         if not content or not content.get('text'):
-            print(f"  ✗ No content extracted")
+            print(f"  [x] No content extracted")
             return None
         
-        print(f"  ✓ Extracted {len(content['text'])} chars")
+        print(f"  [+] Extracted {len(content['text'])} chars")
         
         # Try JSON-LD
         json_ld = self.extract_json_ld(html)
         if json_ld:
-            print(f"  ✓ Found {len(json_ld)} JSON-LD blocks")
+            print(f"  [+] Found {len(json_ld)} JSON-LD blocks")
         
         # Detect type
         content_type = self.detect_content_type(
@@ -440,15 +425,15 @@ class MSUDataScraper:
             url,
             content.get('text', '')
         )
-        print(f"  ✓ Type: {content_type}")
+        print(f"  [+] Type: {content_type}")
         
         # Generate training data
         training_data = self.generate_training_data(content, content_type)
         if not training_data:
-            print(f"  ✗ No training data generated")
+            print(f"  [x] No training data generated")
             return None
         
-        print(f"  ✓ Generated {len(training_data)} Q&A pairs")
+        print(f"  [+] Generated {len(training_data)} Q&A pairs")
         
         # Cache
         self._save_cache(url, {'training_data': training_data})
@@ -522,7 +507,7 @@ async def interactive_mode():
             url = f"https://www.missouristate.edu{url if url.startswith('/') else '/' + url}"
         
         urls.append(url)
-        print(f"  ✓ Added ({len(urls)} total)")
+        print(f"   Added ({len(urls)} total)")
     
     if not urls:
         print("\n No URLs provided")
@@ -578,29 +563,29 @@ async def batch_mode():
 
 def main():
     """Main entry point."""
-    print("\n🔍 Checking dependencies...")
+    print("\n Checking dependencies...")
     
     # Check basic dependencies
     try:
         import httpx
         import trafilatura
-        print("✓ httpx and trafilatura installed")
+        print(" [+] httpx and trafilatura installed")
     except ImportError as e:
-        print(f"\n Missing basic dependencies: {e}")
+        print(f"\n [x] Missing basic dependencies: {e}")
         print("\nInstall with:")
         print("  pip install trafilatura httpx")
         return
     
     # Check Playwright (recommended for modern sites)
     if not PLAYWRIGHT_AVAILABLE:
-        print("  Playwright not installed (recommended for JavaScript sites like MSU)")
+        print(" [!] Playwright not installed (recommended for JavaScript sites like MSU)")
         print("\nFor best results, install:")
         print("  pip install playwright")
         print("  playwright install chromium")
         print("\nContinuing with basic HTTP (may produce incomplete data)...")
         input("\nPress Enter to continue anyway, or Ctrl+C to cancel...")
     else:
-        print("✓ Playwright available (will handle JavaScript sites)")
+        print(" [+ Playwright available (will handle JavaScript sites)")
     
     print()
     
@@ -609,7 +594,7 @@ def main():
     except KeyboardInterrupt:
         print("\n\n Cancelled by user")
     except Exception as e:
-        print(f"\n Error: {e}")
+        print(f"\n [x] Error: {e}")
         import traceback
         traceback.print_exc()
 
