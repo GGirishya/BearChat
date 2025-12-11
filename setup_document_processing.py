@@ -37,7 +37,7 @@ def check_python_packages():
 
 def check_tesseract():
     """Check if Tesseract OCR is installed"""
-    print("\n🔍 Checking Tesseract OCR...")
+    print("\n Checking Tesseract OCR...")
     
     try:
         import pytesseract
